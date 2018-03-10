@@ -6,7 +6,7 @@
         "apps/dev-tools"
     ],
     "targetNodes": {
-        "nodeGroup": ["cp", "nosqldb", "sqldb", "bl"]
+        "nodeGroup": ["cp", "nosqldb", "sqldb", "bl", "cache", "build"]
     },
     "name": "Root Access",
     "logo": "http://blog.jelastic.com/wp-content/uploads/2015/11/cs-scheme1.png",
@@ -43,8 +43,21 @@
             "params": {
                 "nodeGroup": "bl"
             }
+            },
+                {
+            "procedure": "InstallRootCH",
+            "params": {
+                "nodeGroup": "cache"
             }
-                 ]}
+            },
+                 {
+            "procedure": "InstallRootBLD",
+            "params": {
+                "nodeGroup": "build"
+            }
+            }
+        ]
+        }
     },
     "procedures": [{
         "id": "InstallRoot",
@@ -105,10 +118,39 @@
             ]
             }
         ]
-        }
-        ],           
+        },
+        {
+        "id": "InstallRootCH",
+        "onCall": [{
+            "executeShellCommands": [{
+                "nodeGroup": "cache",
+                "user": "root",
+                "commands": [
+                    "sed -i \"\\$amemcached\\ ALL=NOPASSWD\\:\\ ALL\" /etc/sudoers",
+                    "sed -i \"\\$ajelastic\\ ALL=NOPASSWD\\:\\ ALL\" /etc/sudoers"
+                ]
+                }
+            ]
+            }
+        ]
+        },
+        {
+        "id": "InstallRootBLD",
+        "onCall": [{
+            "executeShellCommands": [{
+                "nodeGroup": "build",
+                "user": "root",
+                "commands": [
+                    "sed -i \"\\$aapache\\ ALL=NOPASSWD\\:\\ ALL\" /etc/sudoers",
+                    "sed -i \"\\$ajelastic\\ ALL=NOPASSWD\\:\\ ALL\" /etc/sudoers"
+                ]
+                }
+            ]
+            }
+        ]
+        }           
 
-  
+    ],
     "success": {
         "text": "To get root access please connect to container via SSH and execute command <b>sudo su</b>",
         "email": false
